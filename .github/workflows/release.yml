@@ -1,0 +1,22 @@
+# タグ（v*）を押すと、dist/ の配布物と data/ の公開データを GitHub のリリースに載せる。
+name: release
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          gh release create "$TAG" \
+            dist/eval-method-atlas.mcpb dist/eval-method-atlas.mjs \
+            data/atlas-data.json.gz data/questions.json \
+            $(ls dist/papers.jsonl.gz 2>/dev/null) \
+            --title "Eval Method Atlas $TAG" --notes-file RELEASE_NOTES.md
