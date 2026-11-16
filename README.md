@@ -1,7 +1,7 @@
 # Eval Method Atlas — releases
 
 原稿かアイディアを渡すと、実験と評価の設計が返ってくる道具の配布物と、判定結果の公開データです。
-サイト：https://aix-sc.github.io/eval-method-atlas-releases/
+サイト：https://eval.aix.sc/
 
 ## 配布物（Releases）
 
