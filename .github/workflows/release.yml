@@ -1,8 +1,11 @@
-# タグ（v*）を押すと、dist/ の配布物と data/ の公開データを GitHub のリリースに載せる。
+# RELEASE_VERSION を書き換えて main に押すと（または Actions の画面から実行すると）、
+# dist/ の配布物と data/ の公開データを、その版のリリースとして GitHub に載せる。同じ版がすでにあれば何もしない。
 name: release
 on:
   push:
-    tags: ['v*']
+    branches: [main]
+    paths: ['RELEASE_VERSION']
+  workflow_dispatch:
 permissions:
   contents: write
 jobs:
@@ -13,9 +16,10 @@ jobs:
       - name: Create the release
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ github.ref_name }}
         run: |
-          gh release create "$TAG" \
+          TAG="$(tr -d '[:space:]' < RELEASE_VERSION)"
+          if gh release view "$TAG" >/dev/null 2>&1; then echo "$TAG はすでにあります"; exit 0; fi
+          gh release create "$TAG" --target "$GITHUB_SHA" \
             dist/eval-method-atlas.mcpb dist/eval-method-atlas.mjs \
             data/atlas-data.json.gz data/questions.json \
             $(ls dist/papers.jsonl.gz 2>/dev/null) \
