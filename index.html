@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eval Method Atlas</title>
+<meta name="description" content="原稿かアイディアを渡すと、実験と評価の設計が返ってくる。最難関学会（CORE A*）の採録論文の実態と統計学の根拠から、評価手法を提案します。MCP と CLI で。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="site-header"><div class="wrap">
+  <a class="brand" href="./"><b>Eval Method Atlas</b><span>by AIx<i>{ }</i></span></a>
+  <nav class="nav" aria-label="主なメニュー">
+    <a href="./#try" aria-current="page">使ってみる</a><a href="mcp.html">MCP</a><a href="cli.html">CLI</a><a href="research.html">研究と判定の問い</a>
+    <a class="btn-outline" href="https://github.com/aix-sc/eval-method-atlas-releases">GitHub</a>
+  </nav>
+</div></header>
+
+<main>
+<section class="hero"><div class="wrap">
+  <p class="label">Experiment &amp; evaluation design — MCP / CLI / Web</p>
+  <h1>原稿かアイディアを渡すと、<br>実験と評価の設計が返ってくる。</h1>
+  <p class="lead">最難関の学会（CORE A*）の採録論文が、どんなテーマを、どのデータで、どう分けて、何で測り、どう確かめているか。その実態と統計学の根拠を引き合わせて、あなたの研究に合う評価手法と、参考にできる論文を返します。いつもの Claude からは MCP で、ターミナルからは CLI で。</p>
+</div></section>
+
+<section id="try" style="padding:0 0 96px"><div class="wrap">
+  <div class="panel">
+    <div class="tabs" role="tablist" aria-label="使い方">
+      <button role="tab" id="tab-web" aria-controls="p-web" aria-selected="true">ウェブで試す</button>
+      <button role="tab" id="tab-mcp" aria-controls="p-mcp" aria-selected="false">MCP（Claude から）</button>
+      <button role="tab" id="tab-cli" aria-controls="p-cli" aria-selected="false">CLI（ターミナルから）</button>
+    </div>
+
+    <div class="tabpanel" role="tabpanel" id="p-web" aria-labelledby="tab-web">
+      <div class="row">
+        <div class="drop" id="drop">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M12 17v-6"/><path d="M9.5 13.5 12 11l2.5 2.5"/></svg>
+          <p style="font-weight:700;font-size:17px">論文・原稿の PDF</p>
+          <p class="note" style="font-size:14px">ここに置くか、選んでください。PDF はブラウザの中で読み、どこにも送りません。</p>
+          <label for="pdf" class="btn-ghost">ファイルを選ぶ</label>
+          <input id="pdf" type="file" accept="application/pdf" class="sr">
+          <p id="pdf-name" class="note"></p>
+        </div>
+        <div class="field">
+          <label for="idea">またはアイディアを書く</label>
+          <textarea id="idea" rows="6">工場のセンサーの時系列から、3 日先の故障を予測したい。季節で傾向が変わる。既存の手法と比べて良いことを示したい。</textarea>
+        </div>
+      </div>
+      <div class="actions">
+        <p class="note" style="margin:0">計算はすべてこのブラウザの中で行います（公開データを読み込みます）。</p>
+        <button class="btn" id="go-suggest" type="button">研究の特性を読み取る</button>
+      </div>
+      <div id="step2" hidden>
+        <div class="result" style="margin-top:24px">
+          <p class="label">研究の特性</p>
+          <div id="traits"></div>
+          <div class="axis-row"><div class="k"><label for="add-trait">特性を足す</label></div>
+            <div><input id="add-trait" type="search" placeholder="例：ラベルが少ない、推薦、user study" autocomplete="off"><div id="add-list" class="chips" style="margin-top:8px"></div></div></div>
+          <div class="actions"><span></span><button class="btn" id="go-guide" type="button">評価の設計を提案する</button></div>
+        </div>
+      </div>
+      <div id="result"></div>
+    </div>
+
+    <div class="tabpanel" role="tabpanel" id="p-mcp" aria-labelledby="tab-mcp" hidden>
+      <p style="margin:0 0 16px;color:var(--body)">Claude Desktop に拡張機能を入れると、いつもの会話の中で頼めます。サーバーは手元のデータを引くだけで、原稿を外に送りません。<a href="mcp.html">入れ方</a></p>
+      <div id="demo-mcp"></div>
+    </div>
+    <div class="tabpanel" role="tabpanel" id="p-cli" aria-labelledby="tab-cli" hidden>
+      <p style="margin:0 0 16px;color:var(--body)">単一ファイルの CLI です。長い結果はファイルに書き出せます。<a href="cli.html">入れ方</a></p>
+      <div id="demo-cli"></div>
+    </div>
+  </div>
+</div></section>
+
+<section class="section"><div class="wrap">
+  <h2>返ってくるもの</h2>
+  <p class="sub">同じ特性を持つ採録論文の実態と、勧めの根拠。6 つの問いに答えます。</p>
+  <div class="grid6">
+    <div><p class="k">01 データ</p><p>どのデータセット・ベンチマークで評価しているか</p></div>
+    <div><p class="k">02 分け方</p><p>学習とテストをどう分け、どんな実験を組むか</p></div>
+    <div><p class="k">03 指標</p><p>何の指標で測っているか、何を併記すべきか</p></div>
+    <div><p class="k">04 検定</p><p>差をどの検定・区間・ばらつきで確かめるか</p></div>
+    <div><p class="k">05 注意</p><p>データの性質と検定の食い違い（乖離の規則）と、その根拠の文献</p></div>
+    <div><p class="k">06 実例</p><p>その手法を実際に使った採録論文。DOI と原稿を読めるリンクつき</p></div>
+  </div>
+</div></section>
+
+<section class="section dark"><div class="wrap" style="display:flex;flex-wrap:wrap;gap:48px">
+  <div style="flex:1 1 380px">
+    <p class="label">MCP</p>
+    <h2>中心は MCP。<br>いつもの Claude が、評価の設計者になる。</h2>
+    <p style="color:#C9CCD3">Claude が原稿やアイディアを読み、研究の特性を選び、Atlas の道具で採録論文の実態と勧めを引きます。拡張機能にデータを同梱しているので、オフラインでも動きます。</p>
+    <p><a class="btn" href="mcp.html">MCP を入れる</a></p>
+  </div>
+  <div style="flex:1 1 420px;min-width:0">
+    <p class="label">CLI</p>
+    <pre class="code"><span class="c"># 文から研究の特性の候補を挙げる</span>
+node eval-method-atlas.mjs suggest-traits --text "…"
+
+<span class="c"># 特性から、評価の設計ガイドを書き出す</span>
+node eval-method-atlas.mjs design-guide \
+  --traits t_forecasting,d_time_series,c_nonstationary \
+  --md --out guide.md
+
+<span class="c"># 参考にできる論文（DOI と読めるリンク）</span>
+node eval-method-atlas.mjs reference-papers \
+  --traits t_forecasting,d_time_series --method temporal_split</pre>
+    <p><a class="btn-ghost" style="border-color:#E8E9E4;color:#E8E9E4" href="cli.html">CLI を入れる</a></p>
+  </div>
+</div></section>
+
+<section class="section tint" id="research"><div class="wrap">
+  <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:24px;align-items:flex-end;margin-bottom:28px">
+    <div style="max-width:680px">
+      <p class="label">Research</p>
+      <h2>道具の後ろにある研究</h2>
+      <p style="margin:0;color:var(--body)">CORE A* の学会の採録論文（2024〜2026）を集め、研究の特性と評価のしかたを分類しています。勧めは、採録論文の実態（T2）だけでなく、統計学の性質（T1）と専門家の勧告（T3）に照らして書きます。多くの論文がしていることが、正しいとは限らないからです。</p>
+    </div>
+    <a class="btn-ghost" href="research.html">判定の問いとデータ</a>
+  </div>
+  <div class="stats" id="stats">
+    <div><b id="s-papers">—</b><span>分類済みの採録論文</span></div>
+    <div><b id="s-venues">—</b><span>学会</span></div>
+    <div><b>46 / 26</b><span>評価手法 / 指標の族</span></div>
+    <div><b>19</b><span>データと検定の乖離の規則</span></div>
+  </div>
+</div></section>
+</main>
+
+<footer class="site-footer"><div class="wrap">
+  <p>AIx<i>{ }</i> Project ・ Musashino University, Faculty of Data Science ・ データ CC BY 4.0</p>
+  <p>提案は設計の手がかりであり、正しさの保証ではありません。</p>
+</div></footer>
+
+<script type="module">
+import { mountTry } from './assets/app.js';
+import { mountDemo } from './assets/demo.js';
+import { loadData } from './assets/site.js';
+import { corpus_status } from './lib/core.mjs';
+
+const tabs = [...document.querySelectorAll('[role="tab"]')];
+const demos = {};
+function select(t) {
+  for (const x of tabs) { const on = x === t; x.setAttribute('aria-selected', String(on)); document.getElementById(x.getAttribute('aria-controls')).hidden = !on; }
+  const key = t.id.replace('tab-', '');
+  if (key !== 'web' && !demos[key]) demos[key] = mountDemo(document.getElementById(`demo-${key}`), key);
+  for (const [k, d] of Object.entries(demos)) if (k !== key) d.stop();
+}
+tabs.forEach((t, i) => {
+  t.addEventListener('click', () => select(t));
+  t.addEventListener('keydown', (e) => { const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0; if (d) { const n = tabs[(i + d + tabs.length) % tabs.length]; n.focus(); select(n); } });
+});
+mountTry(document.getElementById('p-web'));
+loadData().then(() => {
+  const s = corpus_status();
+  document.getElementById('s-papers').textContent = s.n_judged.toLocaleString();
+  document.getElementById('s-venues').textContent = new Set(s.coverage.filter((c) => c.judged > 0).map((c) => c.venue)).size;
+}).catch(() => {});
+</script>
+</body>
+</html>

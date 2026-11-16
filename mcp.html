@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MCP を入れる — Eval Method Atlas</title>
+<meta name="description" content="Claude Desktop の拡張機能（ローカル版 MCP）で、原稿やアイディアから実験と評価の設計を引く。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="site-header"><div class="wrap">
+  <a class="brand" href="./"><b>Eval Method Atlas</b><span>by AIx<i>{ }</i></span></a>
+  <nav class="nav" aria-label="主なメニュー">
+    <a href="./#try">使ってみる</a><a href="mcp.html" aria-current="page">MCP</a><a href="cli.html">CLI</a><a href="research.html">研究と判定の問い</a>
+    <a class="btn-outline" href="https://github.com/aix-sc/eval-method-atlas-releases">GitHub</a>
+  </nav>
+</div></header>
+
+<main>
+<section class="hero"><div class="wrap">
+  <p class="label">Eval Method Atlas — MCP</p>
+  <h1>MCP を入れる</h1>
+  <p class="lead">Claude Desktop に、実験と評価の設計の道具を追加します。原稿の PDF やアイディアを渡して「評価はどう設計すればいい？」「この原稿の評価を点検して」と頼むと、採録論文の実態にもとづく提案と、参考にできる論文が返ります。</p>
+  <div class="dls">
+    <div>
+      <div class="t">Claude Desktop の拡張機能</div>
+      <div class="f">eval-method-atlas.mcpb ・ ローカル版 MCP ・ データ同梱</div>
+      <a class="btn" href="https://github.com/aix-sc/eval-method-atlas-releases/releases/latest/download/eval-method-atlas.mcpb">ダウンロード</a>
+    </div>
+    <div style="background:var(--soft)">
+      <div class="t">コマンドライン（CLI）</div>
+      <div class="f">eval-method-atlas.mjs ・ 単一ファイル</div>
+      <a class="btn-ghost" href="cli.html">CLI のページへ</a>
+      <p class="note" style="margin:12px 0 0">Claude Code などのターミナルからは CLI をお使いください。</p>
+    </div>
+  </div>
+</div></section>
+
+<section class="section"><div class="wrap">
+  <p class="label">Demo</p>
+  <h2>ファイルとひとことで、こう返ります。</h2>
+  <div id="demo"></div>
+</div></section>
+
+<section class="section"><div class="wrap-narrow">
+  <p class="label">Getting started</p>
+  <h2>拡張機能（Claude Desktop）</h2>
+  <ol class="steps">
+    <li>上の <b>eval-method-atlas.mcpb</b> をダウンロードします。登録や API キーは要りません。</li>
+    <li>ダウンロードしたファイルをダブルクリックすると、Claude Desktop に追加する画面が出ます。「インストール」を押します。</li>
+    <li>Claude に話しかけます。例：「~/Desktop/draft.pdf の評価の設計を点検して」「推薦のオフライン評価で、参考になる論文を 5 本」「ユーザースタディを入れるべきか、採録論文の実態を見て判断して」</li>
+    <li>Claude が原稿を読んで研究の特性を選び、<code>design_guide</code>・<code>review_design</code>・<code>reference_papers</code> などを呼びます。答えには、採録論文での採用率（実態）と、勧めの根拠（統計学の性質・専門家の勧告）が分けて書かれます。</li>
+  </ol>
+  <p class="note">対応：macOS・Windows の Claude Desktop（Node.js は Claude Desktop に含まれます）。そのほかの MCP クライアントでは、<code>server/index.mjs</code> を <code>node</code> で起動する stdio サーバーとして登録できます。</p>
+</div></section>
+
+<section class="section"><div class="wrap">
+  <p class="label">Tools</p>
+  <h2>13 の道具</h2>
+  <div class="rows" id="tools"></div>
+  <p class="note" style="margin-top:12px">すべて読み取りだけの道具です。CLI のコマンドと 1 対 1 に対応しています（名前の <code>_</code> を <code>-</code> にしたもの）。</p>
+</div></section>
+
+<section class="section"><div class="wrap-narrow">
+  <p class="label">Data</p>
+  <h2>ファイルはどこへ行くか</h2>
+  <p>原稿の PDF やアイディアは、<b>Claude が読むだけ</b>です。Eval Method Atlas のサーバーは、拡張機能に同梱した公開データ（採録論文の書誌・リンク・判定のラベル）を手元で引くだけで、LLM を呼ばず、原稿をどこにも送りません。原稿を Claude に渡すことの扱いは、お使いの Claude の設定に従います。</p>
+  <p>公開データの中身と判定の問いは <a href="research.html">研究と判定の問い</a> にあります。ライセンスは CC BY 4.0 です。</p>
+  <h3>困ったとき</h3>
+  <ul>
+    <li>拡張機能が出てこない：Claude Desktop を最新版にして再起動してください。</li>
+    <li>「研究の特性 ID ではありません」と出る：<code>find_traits</code> か <code>suggest_traits</code> で ID を探すよう、Claude に頼んでください。</li>
+    <li>当てはまる論文が少ない：特性を 2〜3 個に減らすと母数が増えます。</li>
+    <li>そのほかは <a href="https://github.com/aix-sc/eval-method-atlas-releases/issues">GitHub の Issues</a> へ。</li>
+  </ul>
+</div></section>
+</main>
+
+<footer class="site-footer"><div class="wrap">
+  <p>AIx<i>{ }</i> Project ・ Musashino University, Faculty of Data Science ・ データ CC BY 4.0</p>
+  <p>提案は設計の手がかりであり、正しさの保証ではありません。</p>
+</div></footer>
+
+<script type="module">
+import { mountDemo } from './assets/demo.js';
+import { h } from './assets/site.js';
+import { TOOLS } from './lib/core.mjs';
+mountDemo(document.getElementById('demo'), 'mcp');
+document.getElementById('tools').replaceChildren(...TOOLS.map((t) => h('div', {}, h('div', {}, t.name), h('div', {}, t.desc))));
+</script>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>研究と判定の問い — Eval Method Atlas</title>
+<meta name="description" content="Eval Method Atlas の研究の概要と、判定モデル（Jev）に送っているすべての問いと判定の基準、公開データ。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="site-header"><div class="wrap">
+  <a class="brand" href="./"><b>Eval Method Atlas</b><span>by AIx<i>{ }</i></span></a>
+  <nav class="nav" aria-label="主なメニュー">
+    <a href="./#try">使ってみる</a><a href="mcp.html">MCP</a><a href="cli.html">CLI</a><a href="research.html" aria-current="page">研究と判定の問い</a>
+    <a class="btn-outline" href="https://github.com/aix-sc/eval-method-atlas-releases">GitHub</a>
+  </nav>
+</div></header>
+
+<main>
+<section class="hero"><div class="wrap">
+  <p class="label">Research</p>
+  <h1>研究と判定の問い</h1>
+  <p class="lead">最難関の学会の採録論文は、どんなテーマを、どの評価手法で、どう確かめているか。1 本ずつ同じ問いで分類し、研究の特性と評価のしかたの対応を数えています。判定に使ったすべての問いと基準を、ここに公開します。</p>
+</div></section>
+
+<section class="section"><div class="wrap">
+  <div class="stats">
+    <div><b id="s-papers">—</b><span>分類済みの採録論文</span></div>
+    <div><b id="s-venues">—</b><span>CORE A* の学会（2024〜2026）</span></div>
+    <div><b id="s-q">—</b><span>1 本あたりの問い（序論 / 実験の節）</span></div>
+    <div><b>19</b><span>データと検定の乖離の規則</span></div>
+  </div>
+  <p class="note" id="s-gen" style="margin-top:12px"></p>
+</div></section>
+
+<section class="section"><div class="wrap-narrow">
+  <h2>何をしているか</h2>
+  <p>採録論文の本文（序論と、実験・結果の節）を判定モデルに読ませ、「はい／いいえ」で答える問いに答えさせます。序論の問いで<b>どんな研究か</b>（目的・データの形・課題・学習のしかた・正解の性質・気をつける性質・分野・応用領域・10 Senses Model の狙う感覚）を、実験の節の問いで<b>どう評価しているか</b>（評価手法 46・指標の族 26・測っている感覚）を判定します。</p>
+  <p>同じ特性を持つ論文を集めると、「この特性の研究は、どのデータで、どう分け、何で測り、どう確かめているか」が数えられます。これが道具の返す「採録論文の実態」です。統計的検定・データセット名・指標名は、これとは別に、本文から規則ベースで拾っています。</p>
+  <h3>勧めの根拠を 3 つに分ける</h3>
+  <p>採録論文の実態（<b>T2</b>）は「多くの研究がしていること」で、正しさの根拠ではありません。勧めは、統計学の数学的な性質から言えること（<b>T1</b>）と、専門家の勧告・報告の作法（<b>T3</b>）に照らして書き、実態と食い違うところを「乖離の規則」として示します。旗は要確認の候補であって、誤りの断定ではありません。</p>
+  <h3>判定のしかた</h3>
+  <ul id="judge-how">
+    <li>判定モデル：<span id="j-model">—</span>（TypeSafe Jev。文章を生成せず、問いごとに当てはまる確率を返す判定モデル）</li>
+    <li>当てはまる：確率 <span id="j-pos">—</span> 以上 ／ 当てはまらない：<span id="j-neg">—</span> 以下 ／ その間は判断保留</li>
+    <li>本文が長いときは <span id="j-chunk">—</span> 字ごとに区切って判定し、いちばん高い確率をとる（序論は先頭の <span id="j-intro">—</span> 字まで）</li>
+    <li>子の項目が当てはまれば親の項目も当てはまるとする（例：知識グラフ → グラフ）</li>
+    <li>ラベルの精度は、人と第 2 の判定者による点検で確かめている途中です。結果は公開データの PROVENANCE に載せます。</li>
+  </ul>
+</div></section>
+
+<section class="section" id="questions"><div class="wrap">
+  <p class="label">Questions</p>
+  <h2>判定のすべての問いと基準</h2>
+  <p class="sub">判定モデルに送るのは英語の原文です。日本語は人が読むための参考訳で、判定には使っていません。</p>
+  <div class="qtools">
+    <label class="sr" for="q-find">問いを探す</label>
+    <input id="q-find" type="search" placeholder="問いを探す（例：時間、交絡、user study）">
+    <label class="sr" for="q-sec">節</label>
+    <select id="q-sec"><option value="">すべての節</option><option value="intro">序論（どんな研究か）</option><option value="results">実験の節（どう評価したか）</option></select>
+    <label class="sr" for="q-axis">軸</label>
+    <select id="q-axis"><option value="">すべての軸</option></select>
+    <span class="note" id="q-count"></span>
+  </div>
+  <div id="q-list"><p class="loading">読み込んでいます…</p></div>
+</div></section>
+
+<section class="section tint"><div class="wrap-narrow">
+  <p class="label">Data</p>
+  <h2>公開データ</h2>
+  <p>判定の結果はすべて公開しています。本文・アブストラクト・抽出した文は含みません。原文は各論文のリンク先で読んでください。</p>
+  <ul>
+    <li><a href="https://github.com/aix-sc/eval-method-atlas-releases/releases/latest/download/atlas-data.json.gz">atlas-data.json.gz</a>：論文ごとの書誌・DOI・読めるリンク・判定ラベル・データセット名・指標名・検定・乖離の旗と、集計（MCP・CLI・このサイトが使うもの）</li>
+    <li><a href="https://github.com/aix-sc/eval-method-atlas-releases/releases/latest/download/papers.jsonl.gz">papers.jsonl.gz</a>：論文ごとのすべてのラベルの確率と判定</li>
+    <li><a href="https://github.com/aix-sc/eval-method-atlas-releases/releases/latest/download/questions.json">questions.json</a>：判定の問いと基準（このページの元）</li>
+    <li><a href="https://github.com/aix-sc/eval-method-atlas-releases">GitHub のリポジトリ</a>：分類体系・集計表・判定の条件の記録（PROVENANCE）</li>
+  </ul>
+  <p>ライセンス：<b>CC BY 4.0</b>（書誌は DBLP 由来、CC0）。引用：<span id="cite" class="mono" style="font-size:13px">Takahashi, Y. et al. Eval Method Atlas (AIx{ } Project, Musashino University), 2026.</span></p>
+</div></section>
+</main>
+
+<footer class="site-footer"><div class="wrap">
+  <p>AIx<i>{ }</i> Project ・ Musashino University, Faculty of Data Science ・ データ CC BY 4.0</p>
+  <p>提案は設計の手がかりであり、正しさの保証ではありません。</p>
+</div></footer>
+
+<script type="module">
+import { loadData, h } from './assets/site.js';
+import { corpus_status } from './lib/core.mjs';
+
+loadData().then(() => {
+  const s = corpus_status();
+  document.getElementById('s-papers').textContent = s.n_judged.toLocaleString();
+  document.getElementById('s-venues').textContent = new Set(s.coverage.filter((c) => c.judged > 0).map((c) => c.venue)).size;
+  document.getElementById('s-gen').textContent = `データの版：${s.generated}`;
+}).catch(() => {});
+
+const Q = await (await fetch('data/questions.json')).json();
+document.getElementById('s-q').textContent = `${Q.n_intro} / ${Q.n_results}`;
+document.getElementById('j-model').textContent = Q.model;
+document.getElementById('j-pos').textContent = Q.thresholds.positive;
+document.getElementById('j-neg').textContent = Q.thresholds.negative;
+document.getElementById('j-chunk').textContent = Q.chunk_chars.toLocaleString();
+document.getElementById('j-intro').textContent = Q.intro_max_chars.toLocaleString();
+const axes = [...new Map(Q.questions.map((q) => [q.axis, q.axis_ja])).entries()];
+document.getElementById('q-axis').append(...axes.map(([a, ja]) => h('option', { value: a }, ja)));
+
+function item(q) {
+  const sec = q.section === 'intro' ? '序論' : '実験の節';
+  if (q.type === 'choice') {
+    return h('details', { class: 'q' }, h('summary', {}, h('b', {}, q.ja), h('span', { class: 'ax' }, `${sec} ・ 1 つを選ぶ`), h('span', { class: 'id' }, q.id)),
+      h('div', { class: 'qbody' },
+        h('div', {}, h('dl', {}, ...q.choices.flatMap((c) => [h('dt', {}, `${c.ja}（${c.id}）`), h('dd', {}, c.criterion_ja || '')]))),
+        h('div', { class: 'en' }, q.question + '\n\n' + q.choices.map((c) => `${c.id}: ${c.criterion}`).join('\n'))));
+  }
+  return h('details', { class: 'q' }, h('summary', {}, h('b', {}, q.ja), h('span', { class: 'ax' }, `${sec} ・ ${q.axis_ja}`), h('span', { class: 'id' }, q.id)),
+    h('div', { class: 'qbody' },
+      h('div', {}, h('dl', {}, h('dt', {}, '問い'), h('dd', {}, q.question_ja || '（参考訳なし）'),
+        q.true_ja ? [h('dt', {}, '当てはまる'), h('dd', {}, q.true_ja)] : null,
+        q.false_ja ? [h('dt', {}, '当てはまらない'), h('dd', {}, q.false_ja)] : null,
+        q.parent ? [h('dt', {}, '親の項目'), h('dd', {}, q.parent)] : null)),
+      h('div', { class: 'en' }, ['Q: ' + q.question, q.true ? 'TRUE: ' + q.true : '', q.false ? 'FALSE: ' + q.false : ''].filter(Boolean).join('\n\n'))));
+}
+function draw() {
+  const f = document.getElementById('q-find').value.trim().toLowerCase();
+  const sec = document.getElementById('q-sec').value; const ax = document.getElementById('q-axis').value;
+  const xs = Q.questions.filter((q) => (!sec || q.section === sec) && (!ax || q.axis === ax)
+    && (!f || JSON.stringify(q).toLowerCase().includes(f)));
+  document.getElementById('q-count').textContent = `${xs.length} 問`;
+  document.getElementById('q-list').replaceChildren(...xs.map(item));
+}
+['q-find', 'q-sec', 'q-axis'].forEach((id) => document.getElementById(id).addEventListener('input', draw));
+draw();
+</script>
+</body>
+</html>
